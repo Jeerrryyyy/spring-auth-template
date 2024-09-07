@@ -1,4 +1,4 @@
-### spring auth template
+# spring auth template
 
 > Still in development.
 
