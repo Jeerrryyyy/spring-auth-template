@@ -4,7 +4,7 @@
 
 ## How to use
 
-Just create a project from this template. You can use the mode of `User` to add custom things to your user. Otherwise
+Just create a project from this template. You can use the model of `User` to add custom things to your user. Otherwise
 just use spring as usual. A user service, controller and auth are already implemented.
 
 ## Needs
