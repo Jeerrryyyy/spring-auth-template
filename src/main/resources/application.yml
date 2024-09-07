@@ -1,0 +1,13 @@
+server:
+  port: 8082
+
+spring:
+  application:
+    name: spring-auth-template
+  datasource:
+    hikari:
+      minimum-idle: 2
+      maximum-pool-size: 12
+      idle-timeout: 120000
+      connection-timeout: 300000
+      leak-detection-threshold: 300000

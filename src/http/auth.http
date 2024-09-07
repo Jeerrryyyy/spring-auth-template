@@ -1,0 +1,17 @@
+### Login user
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "jerry@test.de",
+  "password": "Hallo123"
+}
+
+### Refresh token of user
+POST {{baseUrl}}/auth/refresh
+Content-Type: application/json
+Authorization: Bearer <your_refresh_token_here>
+
+{
+  "email": "jerry@test.de"
+}

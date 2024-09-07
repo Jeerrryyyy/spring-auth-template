@@ -1,0 +1,30 @@
+### Create user
+POST {{baseUrl}}/user/create
+Content-Type: application/json
+
+{
+  "email": "jerry@test.de",
+  "password": "Hallo123"
+}
+
+### Get user by id
+GET {{baseUrl}}/user/1
+Authorization: Bearer <your_token_here>
+
+### Get all users
+GET {{baseUrl}}/user
+Authorization: Bearer <your_token_here>
+
+### Update role of user
+PATCH {{baseUrl}}/user/role
+Content-Type: application/json
+Authorization: Bearer <your_token_here>
+
+{
+  "id": 1,
+  "role": "ADMIN"
+}
+
+### Delete user
+DELETE {{baseUrl}}/user/1
+Authorization: Bearer <your_token_here>

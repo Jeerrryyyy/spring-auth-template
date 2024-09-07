@@ -1,0 +1,10 @@
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: none
+  datasource:
+    url: ${TEMPLATE_DB_URL}
+    username: ${TEMPLATE_DB_USERNAME}
+    password: ${TEMPLATE_DB_PASSWORD}
+  jwt:
+    secret: ${TEMPLATE_JWT_SECRET}
