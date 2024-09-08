@@ -26,6 +26,8 @@ class JwtService(
         else -> null
     }
 
+    fun extractEmail(token: String): String = extractAllClaims(token)["email"].toString()
+
     fun <T> extractClaim(token: String, claimsResolver: (Claims) -> T): T {
         val claims = extractAllClaims(token)
         return claimsResolver.invoke(claims)
@@ -65,7 +67,7 @@ class JwtService(
     }
 
     fun generateRefreshToken(user: User): String {
-        val claims: MutableMap<String, Any> = HashMap()
+        val claims: MutableMap<String, Any> = mutableMapOf("email" to user.email)
         return createToken(claims, user.id!!, Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10))
     }
 

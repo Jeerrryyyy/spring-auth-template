@@ -9,9 +9,4 @@ Content-Type: application/json
 
 ### Refresh token of user
 POST {{baseUrl}}/auth/refresh
-Content-Type: application/json
 Authorization: Bearer <your_refresh_token_here>
-
-{
-  "email": "jerry@test.de"
-}
