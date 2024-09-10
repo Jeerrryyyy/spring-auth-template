@@ -36,7 +36,7 @@ class UserService(
             .orElseThrow { FailedToCreateUserException("User with email ${createUserRequest.email} was not saved into the db") }
     }
 
-    fun loadUserByEmail(email: String) = userRepository.findByEmail(email)
+    fun loadUserByEmail(email: String): User = userRepository.findByEmail(email)
         .orElseThrow { UserEmailNotFoundException(email) }
 
     fun getUser(id: Long): UserResponse {

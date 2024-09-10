@@ -3,6 +3,7 @@ package com.jevzo.auth.controller
 import com.jevzo.auth.request.AuthenticationRequest
 import com.jevzo.auth.response.AuthenticationResponse
 import com.jevzo.auth.response.RefreshAuthenticationResponse
+import com.jevzo.auth.response.mapper.UserResponseMapper
 import com.jevzo.auth.service.JwtService
 import com.jevzo.auth.service.UserService
 import org.springframework.http.HttpHeaders
@@ -16,7 +17,8 @@ import org.springframework.web.bind.annotation.*
 class AuthController(
     private val authenticationManager: AuthenticationManager,
     private val userService: UserService,
-    private val jwtService: JwtService
+    private val jwtService: JwtService,
+    private val userResponseMapper: UserResponseMapper
 ) {
 
     @PostMapping("/login")
@@ -29,7 +31,7 @@ class AuthController(
         val jwt = jwtService.generateToken(user)
         val refreshToken = jwtService.generateRefreshToken(user)
 
-        return ResponseEntity.ok(AuthenticationResponse(jwt, refreshToken, user.id!!, user.role))
+        return ResponseEntity.ok(AuthenticationResponse(jwt, refreshToken, userResponseMapper.apply(user)))
     }
 
     @PostMapping("/refresh")
