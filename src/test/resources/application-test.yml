@@ -1,0 +1,10 @@
+spring:
+  datasource:
+    url: jdbc:tc:postgresql:13://localhost:5432/testdb
+    username: testuser
+    password: testpass
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+  jwt:
+    secret: ZG9sbGFyaGVhcmluZ3Bvc2l0aXZlbXVzY2xlbm9kZGVkY29va2llc2RlYWxjYXVnaHR0YXBlbGlzdGRpZmZlcmVuY2VtYWRyYW5tb3N0bHlyb3VuZGJlc2lkZWVuZ2luZXN0ZWVsbWVkaWNpbmVmYXZvcml0ZWRvbGxicmVlemU=

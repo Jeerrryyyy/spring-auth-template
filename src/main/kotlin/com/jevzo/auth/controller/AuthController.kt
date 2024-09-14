@@ -36,7 +36,7 @@ class AuthController(
 
     @PostMapping("/refresh")
     fun refreshToken(@RequestHeader(HttpHeaders.AUTHORIZATION) token: String): ResponseEntity<RefreshAuthenticationResponse> {
-        val email = jwtService.extractEmail(token)
+        val email = jwtService.extractEmail(token.substring("Bearer ".length))
         val user = userService.loadUserByEmail(email)
         val jwt = jwtService.generateToken(user)
 

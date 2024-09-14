@@ -5,6 +5,7 @@ import com.jevzo.auth.service.JwtService
 import jakarta.servlet.FilterChain
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
+import org.springframework.http.HttpHeaders
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource
 import org.springframework.stereotype.Component
@@ -20,14 +21,14 @@ class JwtRequestFilter(
         httpServletResponse: HttpServletResponse,
         filterChain: FilterChain
     ) {
-        val authorizationHeader = httpServletRequest.getHeader("Authorization")
+        val authorizationHeader = httpServletRequest.getHeader(HttpHeaders.AUTHORIZATION)
 
         var id: Long? = null
         var jwt: String? = null
         var role: Role? = null
 
         if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
-            jwt = authorizationHeader.substring(7)
+            jwt = authorizationHeader.substring("Bearer ".length)
             id = jwtService.extractId(jwt)
             role = jwtService.extractRole(jwt)
         }
