@@ -108,6 +108,8 @@ class AuthControllerIntegrationTest {
             .andReturn().response
 
         val authResponse = objectMapper.readValue(loginResponse.contentAsString, AuthenticationResponse::class.java)
+        assert(authResponse.accessToken.isNotBlank()) { "JWT token should not be blank" }
+        assert(!authResponse.refreshToken.isNullOrBlank()) { "Refresh token should not be null" }
 
         val refreshToken = authResponse.refreshToken!!
         val refreshResponse: MockHttpServletResponse = mockMvc.perform(
@@ -118,8 +120,10 @@ class AuthControllerIntegrationTest {
             .andExpect(MockMvcResultMatchers.status().isOk)
             .andReturn().response
 
-        val newAuthResponse =
-            objectMapper.readValue(refreshResponse.contentAsString, AuthenticationResponse::class.java)
+        val newAuthResponse = objectMapper.readValue(
+            refreshResponse.contentAsString, AuthenticationResponse::class.java
+        )
         assert(newAuthResponse.accessToken.isNotBlank()) { "New JWT token should not be blank" }
+        assert(newAuthResponse.refreshToken == null) { "No new refresh token should be sent after refresh" }
     }
 }
