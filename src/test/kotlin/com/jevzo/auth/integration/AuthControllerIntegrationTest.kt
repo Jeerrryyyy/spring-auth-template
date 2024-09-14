@@ -17,8 +17,6 @@ import org.springframework.http.MediaType
 import org.springframework.mock.web.MockHttpServletResponse
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.test.context.ActiveProfiles
-import org.springframework.test.context.DynamicPropertyRegistry
-import org.springframework.test.context.DynamicPropertySource
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers
@@ -47,19 +45,12 @@ class AuthControllerIntegrationTest {
 
     companion object {
         @Container
+        @Suppress("Unused") // Is used by hibernate
         val postgresContainer = PostgreSQLContainer<Nothing>("postgres:13").apply {
             withDatabaseName("testdb")
             withUsername("testuser")
             withPassword("testpass")
             start()
-        }
-
-        @JvmStatic
-        @DynamicPropertySource
-        fun registerPgProperties(registry: DynamicPropertyRegistry) {
-            registry.add("spring.datasource.url", postgresContainer::getJdbcUrl)
-            registry.add("spring.datasource.username", postgresContainer::getUsername)
-            registry.add("spring.datasource.password", postgresContainer::getPassword)
         }
     }
 
