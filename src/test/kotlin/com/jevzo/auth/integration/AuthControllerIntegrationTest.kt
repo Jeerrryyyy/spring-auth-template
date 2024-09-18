@@ -25,10 +25,10 @@ import org.testcontainers.junit.jupiter.Container
 import org.testcontainers.junit.jupiter.Testcontainers
 
 @SpringBootTest
-@AutoConfigureMockMvc
 @Testcontainers
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@AutoConfigureMockMvc
 @ActiveProfiles("test")
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class AuthControllerIntegrationTest {
 
     @Autowired
@@ -93,6 +93,71 @@ class AuthControllerIntegrationTest {
     }
 
     @Test
+    fun `should return with unauthorized when no token is submitted`() {
+        mockMvc.perform(
+            MockMvcRequestBuilders.post("/auth/refresh")
+                .contentType(MediaType.APPLICATION_JSON)
+        ).andExpect(MockMvcResultMatchers.status().isUnauthorized)
+    }
+
+    @Test
+    fun `should return with unauthorized when no required role is submitted`() {
+        val authenticationRequest = AuthenticationRequest(
+            email = "testuser@example.com",
+            password = "password"
+        )
+
+        val loginResponse: MockHttpServletResponse = mockMvc.perform(
+            MockMvcRequestBuilders.post("/auth/login")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(authenticationRequest))
+        )
+            .andExpect(MockMvcResultMatchers.status().isOk)
+            .andReturn().response
+
+        val authResponse = objectMapper.readValue(loginResponse.contentAsString, AuthenticationResponse::class.java)
+        assert(authResponse.accessToken.isNotBlank()) { "JWT token should not be blank" }
+        assert(!authResponse.refreshToken.isNullOrBlank()) { "Refresh token should not be null" }
+
+        val accessToken = authResponse.accessToken
+        mockMvc.perform(
+            MockMvcRequestBuilders.get("/user")
+                .header(HttpHeaders.AUTHORIZATION, "Bearer $accessToken")
+        ).andExpect(MockMvcResultMatchers.status().isForbidden)
+    }
+
+    @Test
+    fun `should return a actual response when the right role is submitted`() {
+        val authenticationRequest = AuthenticationRequest(
+            email = "testadmin@example.com",
+            password = "password"
+        )
+
+        val loginResponse: MockHttpServletResponse = mockMvc.perform(
+            MockMvcRequestBuilders.post("/auth/login")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(authenticationRequest))
+        )
+            .andExpect(MockMvcResultMatchers.status().isOk)
+            .andReturn().response
+
+        val authResponse = objectMapper.readValue(loginResponse.contentAsString, AuthenticationResponse::class.java)
+        assert(authResponse.accessToken.isNotBlank()) { "JWT token should not be blank" }
+        assert(!authResponse.refreshToken.isNullOrBlank()) { "Refresh token should not be null" }
+
+        val accessToken = authResponse.accessToken
+        val usersResponse = mockMvc.perform(
+            MockMvcRequestBuilders.get("/user")
+                .header(HttpHeaders.AUTHORIZATION, "Bearer $accessToken")
+        )
+            .andExpect(MockMvcResultMatchers.status().isOk)
+            .andReturn().response
+
+        val users = objectMapper.readValue(usersResponse.contentAsString, List::class.java)
+        assert(users.isNotEmpty()) { "Users should not be empty since the right role is submitted" }
+    }
+
+    @Test
     fun `should refresh JWT using refresh token`() {
         val authenticationRequest = AuthenticationRequest(
             email = "testuser@example.com",
@@ -115,7 +180,6 @@ class AuthControllerIntegrationTest {
         val refreshResponse: MockHttpServletResponse = mockMvc.perform(
             MockMvcRequestBuilders.post("/auth/refresh")
                 .header(HttpHeaders.AUTHORIZATION, "Bearer $refreshToken")
-                .contentType(MediaType.APPLICATION_JSON)
         )
             .andExpect(MockMvcResultMatchers.status().isOk)
             .andReturn().response
